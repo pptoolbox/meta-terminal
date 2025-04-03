@@ -48,7 +48,7 @@ This project is licensed under the GPL 3.0 License - see the [LICENSE](LICENSE) 
 ## Acknowledgments
 
 * **TradingView:** This project utilizes the TradingView charting library.
-* The use of cryptocurrency data from Binance.
+* **Binance:** This project displays cryptocurrency data from Binance.
 
 ## Disclaimer
 
