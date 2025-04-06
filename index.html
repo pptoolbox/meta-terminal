@@ -124,25 +124,26 @@
       <button id="fullscreen-btn3" class="fullscreen-btn" style="position: fixed; right: 50vw; bottom: 0vh;" onclick="toggleFullscreen(event, 'chart3')">&#9698;</button>
       <button id="fullscreen-btn4" class="fullscreen-btn" style="position: fixed; right: 0vw; bottom: 0vh;" onclick="toggleFullscreen(event, 'chart4')">&#9698;</button>
     </div>
-    <script type="text/javascript">
-      function checkConnection() {
-        if (!navigator.onLine) {
+    <script id="check-Connection">
+      async function checkConnection() {
+        try {
+          await fetch("https://www.gstatic.com/generate_204", { mode: "no-cors" });
+          document.getElementById('alert').style.display = 'none';
+          document.getElementById('topbar').style.display = 'flex';
+          document.getElementById('btn-container').style.display = 'block';
+          document.getElementById('grid-container').style.display = 'grid'
+        } catch {
           document.getElementById('topbar').style.display = 'none';
           document.getElementById('btn-container').style.display = 'none';
           document.getElementById('grid-container').style.display = 'none';
           document.getElementById('alert').style.display = 'flex';
-        } else {
-          document.getElementById('alert').style.display = 'none';
-          document.getElementById('topbar').style.display = 'flex';
-          document.getElementById('btn-container').style.display = 'block';
-          document.getElementById('grid-container').style.display = 'grid';
         }
       }
-      window.addEventListener('offline', checkConnection);
-      window.addEventListener('online', checkConnection);
+    
+      setInterval(checkConnection, 1000);
       checkConnection();
-    </script>
-    <script type="text/javascript">
+    </script>    
+    <script id="calculate-Margin">
       function calculateMargin() {
         const risk = parseFloat(document.getElementById('riskInput').value) || 0;
         const used = parseFloat(document.getElementById('usedInput').value) || 0;
@@ -168,7 +169,7 @@
       document.getElementById('riskInput').addEventListener('input', calculateMargin);
       document.getElementById('usedInput').addEventListener('input', calculateMargin);
     </script>
-    <script type="text/javascript">
+    <script id="create-Chart">
       function createChart(containerId, symbol) {
           new TradingView.widget({
               "autosize": true,
@@ -196,7 +197,7 @@
       createChart("chart3", "BINANCE:XRPUSDT.P");
       createChart("chart4", "BINANCE:DOGEUSDT.P");
     </script>
-    <script type="text/javascript">
+    <script id="toggle-Fullscreen">
       function toggleFullscreen(event, chartId) {
         event.stopPropagation();
         const chartBox = document.getElementById(chartId);
