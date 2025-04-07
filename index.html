@@ -1,1 +1,252 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><link rel="icon" href="logo.svg"><title>Meta Terminal</title><script src="https://s3.tradingview.com/tv.js"></script><style>html,body{margin:0;padding:0;height:100%;width:100%;background:#d9dadb;overflow:hidden}.alert{display:none;justify-content:center;align-items:center;height:100vh;width:100vw;background:#000;color:#f11;font-size:35vh;text-align:center;z-index:1000}.topbar{display:flex;align-items:center;justify-content:space-between;font-size:14px;font-family:Dejavu Sans,sans-serif;height:4.25vh;width:100vw;user-select:none}.margin-calculator{margin:0;padding:.5% 2.5% .5% 1%;background:#fff;clip-path:polygon(0 0,95% 0,100% 100%,0 100%)}.input-box{background:#eee;border:1px;border-radius:5px;padding:3px;width:50px;text-align:center}input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}input:focus{outline:none}.clock{margin:0;padding:1% 1% 1% 1.75%;background:#fff;clip-path:polygon(23% 0,100% 0,100% 100%,0 100%)}.grid-container{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;height:95.25vh;width:100vw}.chart-box{width:100%;height:100%}.chart-box.fullscreen{height:95.25vh!important;width:100vw!important;background:#d9dadb}.fullscreen-btn{display:block;background:none;padding:0;color:#d9dadb;border:none;font-size:25px}</style></head><body><div id="alert" class="alert" oncontextmenu="return false;"><p>Ho Gaya Kand!</p></div><div id="topbar" class="topbar" oncontextmenu="return false;"><div id="margin-calculator" class="margin-calculator"><label>Risk(%): <input id="riskInput" class="input-box" type="number"/></label><label>Used(%): <input id="usedInput" class="input-box" type="number"/></label><span id="marginOutput">Margin(%): 0 [0]</span></div><div id="clock" class="clock"></div></div><div id="grid-container" class="grid-container"><div class="chart-box" id="chart1"></div><div class="chart-box" id="chart2"></div><div class="chart-box" id="chart3"></div><div class="chart-box" id="chart4"></div></div><div id="btn-container" oncontextmenu="return false;"><button id="fullscreen-btn1" class="fullscreen-btn" style="position:fixed;right:50vw;bottom:47.5vh" onclick="toggleFullscreen(event,'chart1')">&#9698;</button><button id="fullscreen-btn2" class="fullscreen-btn" style="position:fixed;right:0;bottom:47.5vh" onclick="toggleFullscreen(event,'chart2')">&#9698;</button><button id="fullscreen-btn3" class="fullscreen-btn" style="position:fixed;right:50vw;bottom:0" onclick="toggleFullscreen(event,'chart3')">&#9698;</button><button id="fullscreen-btn4" class="fullscreen-btn" style="position:fixed;right:0;bottom:0" onclick="toggleFullscreen(event,'chart4')">&#9698;</button></div><script>async function checkConnection(){try{await fetch("https://www.gstatic.com/generate_204",{mode:"no-cors"});document.getElementById("alert").style.display="none";document.getElementById("topbar").style.display="flex";document.getElementById("btn-container").style.display="block";document.getElementById("grid-container").style.display="grid"}catch{document.getElementById("topbar").style.display="none";document.getElementById("btn-container").style.display="none";document.getElementById("grid-container").style.display="none";document.getElementById("alert").style.display="flex"}}setInterval(checkConnection,1e3);checkConnection();</script><script>function calculateMargin(){const r=parseFloat(document.getElementById("riskInput").value)||0,u=parseFloat(document.getElementById("usedInput").value)||0;if(r<=0){document.getElementById("marginOutput").innerText="Margin(%): 0 [0]";return}const b=1250/r,c=b>100?100:b,m=100-u;if(m<=0){document.getElementById("marginOutput").innerText="Margin: N/A";return}let mg=(c*100)/m;mg=mg>100?100:mg;document.getElementById("marginOutput").innerText=`Margin(%): ${mg.toFixed(2)} [${c.toFixed(2)}]`}setInterval(()=>{document.getElementById("clock").innerText=new Date().toLocaleTimeString()},1e3);document.getElementById("riskInput").addEventListener("input",calculateMargin);document.getElementById("usedInput").addEventListener("input",calculateMargin);</script><script>function createChart(i,s){new TradingView.widget({autosize:!0,symbol:s,interval:"15",timezone:"Asia/Kolkata",theme:"light",style:"1",locale:"en",hide_top_toolbar:!0,hide_side_toolbar:!1,allow_symbol_change:!0,save_image:!1,studies:["STD;MA%Ribbon","STD;Divergence%1Indicator"],hide_volume:!0,support_host:"https://www.tradingview.com",container_id:i})}createChart("chart1","BINANCE:ETHUSDT.P");createChart("chart2","BINANCE:SOLUSDT.P");createChart("chart3","BINANCE:XRPUSDT.P");createChart("chart4","BINANCE:DOGEUSDT.P");</script><script>function toggleFullscreen(e,i){e.stopPropagation();const c=document.getElementById(i),b=document.querySelectorAll(".fullscreen-btn");if(c.classList.contains("fullscreen")){c.classList.remove("fullscreen");document.querySelectorAll(".chart-box").forEach(a=>a.style.display="");document.getElementById("fullscreen-btn1").style="display:block;position:fixed;right:50vw;bottom:47.5vh";document.getElementById("fullscreen-btn2").style="display:block;position:fixed;right:0;bottom:47.5vh";document.getElementById("fullscreen-btn3").style="display:block;position:fixed;right:50vw;bottom:0";document.getElementById("fullscreen-btn4").style="display:block;position:fixed;right:0;bottom:0"}else{document.querySelectorAll(".chart-box").forEach(a=>{if(a.id!==i)a.style.display="none"});c.classList.add("fullscreen");b.forEach(a=>a.style.display="none");Array.from(b).find(a=>a.getAttribute("onclick").includes(i)).style="display:block;position:fixed;right:0;bottom:0"}};</script><script>document.addEventListener("keydown",e=>{if(e.shiftKey&&e.key.toLowerCase()==="f")document.documentElement.requestFullscreen()});</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg" sizes="32x32" href="logo.svg">
+    <link rel="icon" type="image/svg" sizes="16x16" href="logo.svg">
+    <link rel="shortcut icon" href="logo.svg">
+    <link rel="mask-icon" href="logo.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#2e2e2e">
+    <meta name="msapplication-TileImage" content="logo.svg">
+    <title>Meta Terminal</title>
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        background: #d9dadb;
+        overflow: hidden;
+      }
+      .alert {
+        display: none;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        width: 100vw;
+        background: #000;
+        color: #f11;
+        font-size: 35vh;
+        text-align: center;
+        z-index: 1000;
+      }
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 14px;
+        font-family: Dejavu Sans, sans-serif;
+        height: 4.25vh;
+        width: 100vw;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+      }
+      .margin-calculator {
+        margin: 0;
+        padding: 0.5% 2.5% 0.5% 1%;
+        background-color: #ffffff;
+        clip-path: polygon(0 0, 95% 0, 100% 100%, 0 100%);
+      }
+      .input-box {
+        background: #eeeeee;
+        border: 1px;
+        border-radius: 5px;
+        padding: 3px;
+        width: 50px;
+        text-align: center;
+      }
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input:focus{
+        outline: none;
+      }
+      .clock {
+        margin: 0;
+        padding: 1% 1% 1% 1.75%;
+        background-color: #ffffff;
+        clip-path: polygon(23% 0, 100% 0, 100% 100%, 0 100%);
+
+      }
+      .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        height: 95.25vh;
+        width: 100vw;
+      }
+      .chart-box {
+        width: 100%;
+        height: 100%;
+      }
+      .chart-box.fullscreen {
+        height: 95.25vh !important;
+        width: 100vw !important;
+        background: #d9dadb;
+      }
+      .fullscreen-btn {
+        display: block;
+        background: none;
+        padding: 0;
+        color: #d9dadb;
+        border: none;
+        font-size: 25px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="alert" class="alert"  oncontextmenu="return false;">
+      <p>Ho Gaya Kand!</p>
+    </div>
+    <div id="topbar" class="topbar" oncontextmenu="return false;">
+      <div id="margin-calculator" class="margin-calculator">
+        <label>Risk(%): <input id="riskInput" class="input-box" type="number"/></label>
+        <label>Used(%): <input id="usedInput" class="input-box" type="number"/></label>
+        <span id="marginOutput">Margin(%): 0 [0]</span>
+      </div>
+      <div id="clock" class="clock"></div>
+    </div>
+    <div id="grid-container" class="grid-container">
+      <div class="chart-box" id="chart1"></div>
+      <div class="chart-box" id="chart2"></div>
+      <div class="chart-box" id="chart3"></div>
+      <div class="chart-box" id="chart4"></div>      
+    </div>
+    <div id="btn-container" class="btn-container" oncontextmenu="return false;">
+      <button id="fullscreen-btn1" class="fullscreen-btn" style="position: fixed; right: 50vw; bottom: 47.5vh;" onclick="toggleFullscreen(event, 'chart1')">&#9698;</button>
+      <button id="fullscreen-btn2" class="fullscreen-btn" style="position: fixed; right: 0vw; bottom: 47.5vh;" onclick="toggleFullscreen(event, 'chart2')">&#9698;</button>
+      <button id="fullscreen-btn3" class="fullscreen-btn" style="position: fixed; right: 50vw; bottom: 0vh;" onclick="toggleFullscreen(event, 'chart3')">&#9698;</button>
+      <button id="fullscreen-btn4" class="fullscreen-btn" style="position: fixed; right: 0vw; bottom: 0vh;" onclick="toggleFullscreen(event, 'chart4')">&#9698;</button>
+    </div>
+    <script id="check-Connection">
+      async function checkConnection() {
+        try {
+          await fetch("https://www.gstatic.com/generate_204", { mode: "no-cors" });
+          document.getElementById('alert').style.display = 'none';
+          document.getElementById('topbar').style.display = 'flex';
+          document.getElementById('btn-container').style.display = 'block';
+          document.getElementById('grid-container').style.display = 'grid'
+        } catch {
+          document.getElementById('topbar').style.display = 'none';
+          document.getElementById('btn-container').style.display = 'none';
+          document.getElementById('grid-container').style.display = 'none';
+          document.getElementById('alert').style.display = 'flex';
+        }
+      }
+    
+      setInterval(checkConnection, 1000);
+      checkConnection();
+    </script>    
+    <script id="calculate-Margin">
+      function calculateMargin() {
+        const risk = parseFloat(document.getElementById('riskInput').value) || 0;
+        const used = parseFloat(document.getElementById('usedInput').value) || 0;
+        if (risk <= 0) {
+          document.getElementById('marginOutput').innerText = 'Margin(%): 0 [0]';
+          return;
+        }
+        const baseValue = 1250 / risk;
+        const cappedBase = baseValue > 100 ? 100 : baseValue;
+        const remaining = 100 - used;
+        if (remaining <= 0) {
+          document.getElementById('marginOutput').innerText = 'Margin: N/A';
+          return;
+        }
+        let margin = (cappedBase * 100) / remaining;
+        margin = margin > 100 ? 100 : margin;
+        document.getElementById('marginOutput').innerText = `Margin(%): ${margin.toFixed(2)} [${cappedBase.toFixed(2)}]`;
+      }
+      setInterval(() => {
+        const now = new Date();
+        document.getElementById('clock').innerText = now.toLocaleTimeString();
+      }, 1000);
+      document.getElementById('riskInput').addEventListener('input', calculateMargin);
+      document.getElementById('usedInput').addEventListener('input', calculateMargin);
+    </script>
+    <script id="create-Chart">
+      function createChart(containerId, symbol) {
+          new TradingView.widget({
+              "autosize": true,
+              "symbol": symbol,
+              "interval": "15",
+              "timezone": "Asia/Kolkata",
+              "theme": "light",
+              "style": "1",
+              "locale": "en",
+              "hide_top_toolbar": true,
+              "hide_side_toolbar": false,
+              "allow_symbol_change": true,
+              "save_image": false,
+              "studies": [
+                  "STD;MA%Ribbon",
+                  "STD;Divergence%1Indicator"
+              ],
+              "hide_volume": true,
+              "support_host": "https://www.tradingview.com",
+              "container_id": containerId
+          });
+      }
+      createChart("chart1", "BINANCE:ETHUSDT.P");
+      createChart("chart2", "BINANCE:SOLUSDT.P");
+      createChart("chart3", "BINANCE:XRPUSDT.P");
+      createChart("chart4", "BINANCE:DOGEUSDT.P");
+    </script>
+    <script id="toggle-Fullscreen">
+      function toggleFullscreen(event, chartId) {
+        event.stopPropagation();
+        const chartBox = document.getElementById(chartId);
+        const allButtons = document.querySelectorAll('.fullscreen-btn');
+
+        if (chartBox.classList.contains('fullscreen')) {
+          // Exit fullscreen
+          chartBox.classList.remove('fullscreen');
+        
+          // Show all charts again
+          document.querySelectorAll('.chart-box').forEach(chart => {
+            chart.style.display = '';
+          });
+        
+          // Show all buttons and restore button positions
+          document.getElementById('fullscreen-btn1').style = 'display: block; position: fixed; right: 50vw; bottom: 47.5vh;';
+          document.getElementById('fullscreen-btn2').style = 'display: block; position: fixed; right: 0vw; bottom: 47.5vh;';
+          document.getElementById('fullscreen-btn3').style = 'display: block; position: fixed; right: 50vw; bottom: 0vh;';
+          document.getElementById('fullscreen-btn4').style = 'display: block; position: fixed; right: 0vw; bottom: 0vh;';
+        
+        } else {
+          // Hide other charts
+          document.querySelectorAll('.chart-box').forEach(chart => {
+            if (chart.id !== chartId) {
+              chart.style.display = 'none';
+            }
+          });
+        
+          chartBox.classList.add('fullscreen');
+        
+          // Hide other fullscreen buttons
+          allButtons.forEach(button => {
+            button.style.display = 'none';
+          });
+        
+          // Show only the current chart's fullscreen button
+          const currentBtn = Array.from(allButtons).find(btn =>
+            btn.getAttribute('onclick').includes(chartId)
+          );
+          currentBtn.style = 'display: block; position: fixed; right: 0vw; bottom: 0vh;';
+        }
+      }
+    </script>
+    <script id="shift-F">
+      document.addEventListener('keydown', function (event) {
+        if (event.shiftKey && event.key.toLowerCase() === 'f') {
+          document.documentElement.requestFullscreen();
+        }
+      });
+    </script>
+  </body>
+</html>
