@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg" sizes="32x32" href="icon.png">
+    <link rel="icon" type="image/svg" sizes="16x16" href="icon.png">
+    <link rel="shortcut icon" href="icon.png">
+    <link rel="mask-icon" href="icon.png" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#2e2e2e">
+    <meta name="msapplication-TileImage" content="icon.png">
+  <title>Meta Technicals</title>
+  <style>
+    body, html {
+      zoom: 0.85; /* works in Chrome, Edge, IE */
+      -moz-transform: scale(0.85); /* for Firefox */
+      -moz-transform-origin: 0 0;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      background-color: #121212;
+      font-size: smaller;
+      display: flex;
+      overflow: hidden;
+    }
+    .widgets-container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: stretch;
+      flex-grow: 1;
+      width: 100%;
+      height: 100%;
+    }
+    .tradingview-widget-container {
+      flex: 1 1 auto; /* share space equally */
+      margin: 2px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      overflow: hidden;
+      background-color: #1e1e1e;
+      display: none; /* hidden by default */
+    }
+    .tradingview-widget-container.active {
+      display: flex;
+    }
+    .dock {
+      opacity: 0.25;
+      position: fixed;
+      right: 5px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      background-color: #1e1e1e;
+      border: #333 1px solid;
+      border-radius: 25px;
+      box-shadow: -2px 0 5px rgba(0,0,0,0.4);
+      overflow: hidden;
+      z-index: 10;
+    }
+    .dock:hover {
+      opacity: 0.75;
+    }
+    .dock button {
+      background: none;
+      border: none;
+      border-radius: 25px;
+      padding: 17px 13px;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .dock button:hover {
+      background: #333;
+    }
+    .dock button.active {
+      background: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="widgets-container" id="widgets"></div>
+
+  <!-- Dock -->
+  <div class="dock" id="intervalDock">
+    <button id="intervalButton" data-interval="15m">15m</button>
+    <button id="intervalButton" data-interval="1h">1h</button>
+    <button id="intervalButton" data-interval="4h">4h</button>
+    <button id="intervalButton" data-interval="1D" class="active">1D</button>
+    <button id="fullscreenBtn" style="padding: 9px; font-size: large;">⛶</button>
+  </div>
+
+  <script>
+    const symbols = [
+      "BINANCE:BTCUSDT.P",
+      "BINANCE:ETHUSDT.P",
+      "BINANCE:SOLUSDT.P",
+      "BINANCE:XRPUSDT.P",
+      "BINANCE:DOGEUSDT.P"
+    ];
+    const intervals = ["15m", "1h", "4h", "1D"];
+    const widgetsContainer = document.getElementById("widgets");
+    const dockButtons = document.querySelectorAll("#intervalDock #intervalButton");
+
+    // Create all widgets (symbols × intervals)
+    symbols.forEach(symbol => {
+      intervals.forEach(interval => {
+        const container = document.createElement("div");
+        container.className = "tradingview-widget-container";
+        container.dataset.interval = interval;
+
+        const widgetDiv = document.createElement("div");
+        widgetDiv.className = "tradingview-widget-container__widget";
+        container.appendChild(widgetDiv);
+
+        const script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js";
+        script.async = true;
+        script.innerHTML = JSON.stringify({
+          "colorTheme": "dark",
+          "displayMode": "multiple",
+          "isTransparent": true,
+          "locale": "en",
+          "interval": interval,
+          "disableInterval": false,
+          "width": "100%",
+          "height": "100%",
+          "symbol": symbol,
+          "showIntervalTabs": true
+        });
+        container.appendChild(script);
+
+        widgetsContainer.appendChild(container);
+      });
+    });
+
+    function setActiveInterval(interval) {
+      document.querySelectorAll(".tradingview-widget-container").forEach(c => {
+        c.classList.toggle("active", c.dataset.interval === interval);
+      });
+    }
+
+    // Default = 1D
+    setActiveInterval("1D");
+
+    // Dock button events
+    dockButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        dockButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        setActiveInterval(btn.dataset.interval);
+      });
+    });
+
+    // Fullscreen button
+    const fullscreenBtn = document.getElementById("fullscreenBtn");
+
+    fullscreenBtn.addEventListener("click", () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch((err) => {
+          alert(`Error: ${err.message}`);
+        });
+        fullscreenBtn.textContent = "⛶";
+      } else {
+        document.exitFullscreen();
+        fullscreenBtn.textContent = "⛶";
+      }
+    });
+
+    // Update button text if user exits fullscreen manually
+    document.addEventListener("fullscreenchange", () => {
+      if (!document.fullscreenElement) {
+        fullscreenBtn.textContent = "⛶";
+      }
+    });
+  </script>
+</body>
+</html>
