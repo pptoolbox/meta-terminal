@@ -7,7 +7,7 @@ Meta Terminal is a web-based financial dashboard designed to provide real-time c
 * **Real-time Cryptocurrency Charts:**
     * Displays charts for ETHUSDT, SOLUSDT, XRPUSDT, and DOGEUSDT from Binance using TradingView.
     * Includes technical indicators like MA Ribbon and Divergence Indicator.
-    * Allows users to view charts in fullscreen mode.
+    * Allows users to view charts in full-screen mode.
 * **Margin Calculator:**
     * Calculates margin percentages based on user-inputted risk and used percentages.
 * **Real-time Clock:**
@@ -43,7 +43,7 @@ Meta Terminal is a web-based financial dashboard designed to provide real-time c
 
 ## License
 
-This project is licensed under the GPL 3.0 License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the  [MIT License](LICENSE).
 
 ## Acknowledgments
 
